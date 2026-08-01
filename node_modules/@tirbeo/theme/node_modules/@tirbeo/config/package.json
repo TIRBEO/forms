@@ -1,0 +1,24 @@
+{
+  "name": "@tirbeo/config",
+  "version": "0.0.1",
+  "private": false,
+  "files": [
+    "eslint-preset.js",
+    "prettier.js",
+    "tsconfig.json",
+    "tsconfig.nextjs.json",
+    "tsconfig.react-library.json"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "typescript": "6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

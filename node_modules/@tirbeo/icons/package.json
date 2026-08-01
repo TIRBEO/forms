@@ -1,0 +1,32 @@
+{
+  "name": "@tirbeo/icons",
+  "version": "1.0.0",
+  "description": "Tirbeo shared icon exports",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "lucide-react": "1.28.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "react": "^19.2.8",
+    "tsup": "^8.3.0",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}
+

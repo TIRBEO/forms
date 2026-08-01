@@ -1,0 +1,49 @@
+{
+  "name": "@tirbeo/database",
+  "version": "0.0.1",
+  "private": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.mjs",
+      "require": "./dist/types.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "7.9.1",
+    "@supabase/ssr": "^0.12.4",
+    "pg": "^8.22.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.111.0",
+    "@types/node": "26.1.2",
+    "@types/pg": "^8.20.2",
+    "tsup": "^8.3.0",
+    "tsx": "^4.23.1",
+    "typescript": "6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

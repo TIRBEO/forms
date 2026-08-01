@@ -1,0 +1,42 @@
+{
+  "name": "@tirbeo/ui",
+  "version": "1.0.0",
+  "description": "Tirbeo shared design system components",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./emails": {
+      "types": "./dist/emails/index.d.ts",
+      "default": "./dist/emails/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "clsx": "^2.1.0",
+    "imagesloaded": "^5.0.0",
+    "lucide-react": "1.28.0",
+    "react-icons": "^5.7.0",
+    "tailwind-merge": "3.6.0"
+  },
+  "devDependencies": {
+    "@types/imagesloaded": "^4.1.7",
+    "@types/react": "^19.2.18",
+    "react": "^19.2.8",
+    "tsup": "^8.3.0",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}
+

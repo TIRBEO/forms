@@ -1,0 +1,44 @@
+
+> @tirbeo/forms@0.0.1 build C:\Users\gwbis\Downloads\Tirbeo-All\apps\forms
+> next build
+
+▲ Next.js 16.2.12 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 68s
+  Running TypeScript ...
+  Finished TypeScript in 37.5s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/8) ...
+  Generating static pages using 15 workers (2/8) 
+  Generating static pages using 15 workers (4/8) 
+  Generating static pages using 15 workers (6/8) 
+✓ Generating static pages using 15 workers (8/8) in 3.1s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /create
+├ ƒ /f/[id]
+├ ƒ /f/[id]/activity
+├ ƒ /f/[id]/analytics
+├ ƒ /f/[id]/collaborators
+├ ƒ /f/[id]/edit
+├ ƒ /f/[id]/overview
+├ ƒ /f/[id]/responses
+├ ƒ /f/[id]/responses/[responseId]
+├ ƒ /f/[id]/settings
+├ ƒ /f/[id]/versions
+├ ○ /f/public/[id]-public
+├ ○ /public
+├ ○ /settings
+└ ○ /templates
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
