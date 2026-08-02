@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '../../../../lib/api-client';
 import { cn } from '../../../../lib/utils';
+import { DateField } from '@tirbeo/ui';
 import {
   Settings, Globe, Lock, MessageSquare, Palette, Shield,
   AlertTriangle, Save, Eye, EyeOff, ToggleLeft, Mail,
@@ -275,8 +276,10 @@ export default function SettingsPage() {
             className="w-40 px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-primary)] placeholder:text-[var(--color-text-tertiary)]" />
         </Field>
         <Field label="Close date" description="Automatically stop accepting responses">
-          <input type="date" value={settings.closeDate || ''} onChange={e => update('closeDate', e.target.value)}
-            className="w-40 px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]" />
+          <div className="max-w-sm">
+            <DateField value={settings.closeDate || ''} onChange={v => update('closeDate', v || undefined)}
+              selectClassName="px-3 py-1.5 bg-[var(--color-bg)]" />
+          </div>
         </Field>
         <Field label="Close message" description="Message shown after form is closed">
           <input type="text" value={settings.closeMessage} onChange={e => update('closeMessage', e.target.value)}

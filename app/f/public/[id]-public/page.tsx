@@ -6,6 +6,7 @@ import { api } from '../../../../lib/api-client';
 import { cn } from '../../../../lib/utils';
 import { Send, CheckCircle2, Upload, Star, AlertCircle, ChevronDown } from 'lucide-react';
 import { CaptchaWidget } from '../../../components/captcha/captcha-widget';
+import { DateField } from '@tirbeo/ui';
 
 interface FormField {
   id: string;
@@ -134,8 +135,7 @@ export default function PublicFormRenderer() {
         );
       case 'date':
         return (
-          <input type="date" value={value || ''} onChange={e => setValue(e.target.value)}
-            className={baseInput} />
+          <DateField value={value || ''} onChange={v => setValue(v)} selectClassName={baseSelect} />
         );
       case 'select':
         return (

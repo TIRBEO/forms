@@ -1,7 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
 
-const API_URL = 'https://api.tirbeo.app';
-
 const PUBLIC_PATHS = ['/f/public/', '/_next', '/favicon'];
 
 export async function middleware(request: NextRequest) {
@@ -11,39 +9,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = request.cookies.get('__session');
-  if (session?.value) {
+  // First-party apps share the .tirbeo.app cookie set by Accounts at login,
+  // so a present session cookie is sufficient — no handoff token needed.
+  if (request.cookies.has('__session')) {
     return NextResponse.next();
-  }
-
-  const authHeader = request.headers.get('authorization');
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-
-  if (token) {
-    try {
-      const res = await fetch(`${API_URL}/api/admin/authorize`, {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
-      });
-      if (res.ok) {
-        const cookieDomain = process.env.NODE_ENV !== 'development' ? process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '.tirbeo.app' : undefined;
-        const cookieOptions = {
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== 'development',
-          sameSite: 'lax' as const,
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-        } as any;
-        if (cookieDomain) {
-          cookieOptions.domain = cookieDomain;
-        }
-        const response = NextResponse.next();
-        response.cookies.set('__session', token, cookieOptions);
-        return response;
-      }
-    } catch {
-      // Fall through to redirect
-    }
   }
 
   const host = request.headers.get('host') || '';
