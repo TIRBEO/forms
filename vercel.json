@@ -1,4 +1,7 @@
 {
   "installCommand": "rm -rf node_modules && npm install --legacy-peer-deps",
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://api.tirbeo.app"
+  }
 }
