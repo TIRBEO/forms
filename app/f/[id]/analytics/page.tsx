@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '../../../../lib/api-client';
 import { cn, formatDate } from '../../../../lib/utils';
+import { KpiCard, BarChart, DonutChart } from '@tirbeo/charts';
 import {
-  Eye, Users, Target, Clock, BarChart3, Download, ArrowUp, ArrowDown,
-  Smartphone, Monitor, Tablet, Globe, Star, ChevronRight,
+  Eye, Users, Target, Clock, Download, ArrowUp, ArrowDown,
+  Star,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -20,26 +21,11 @@ interface AnalyticsData {
   ratingDistribution?: { rating: number; count: number }[];
 }
 
-
-function statCard(icon: any, label: string, value: string, trend?: { dir: 'up' | 'down'; pct: string }) {
-  const Icon = icon;
-  return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-      <div className="flex items-center justify-between mb-3">
-        <div className="w-10 h-10 rounded-lg bg-[var(--color-primary-surface)] flex items-center justify-center">
-          <Icon className="w-5 h-5 text-[var(--color-primary)]" />
-        </div>
-        {trend && (
-          <span className={cn('flex items-center gap-0.5 text-xs font-medium', trend.dir === 'up' ? 'text-[var(--color-success)]' : 'text-[var(--color-error)]')}>
-            {trend.dir === 'up' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-            {trend.pct}
-          </span>
-        )}
-      </div>
-      <div className="text-2xl font-semibold text-[var(--color-text)]">{value}</div>
-      <div className="text-xs text-[var(--color-text-secondary)] mt-0.5">{label}</div>
-    </div>
-  );
+function maxSegments(data: { name: string; value: number }[], max: number): { name: string; value: number }[] {
+  if (data.length <= max) return data;
+  const top = data.slice(0, max - 1);
+  const rest = data.slice(max - 1).reduce((sum, d) => sum + d.value, 0);
+  return [...top, { name: 'Other', value: rest }];
 }
 
 export default function AnalyticsPage() {
@@ -70,15 +56,12 @@ export default function AnalyticsPage() {
     );
   }
 
-  const maxTimelineCount = Math.max(...data.submissionTimeline.map(d => d.count), 1);
   const completionPct = `${data.completionRate}%`;
   const avgTime = data.avgTimeSeconds < 60 ? `${data.avgTimeSeconds}s` : `${Math.floor(data.avgTimeSeconds / 60)}m ${data.avgTimeSeconds % 60}s`;
 
-  const deviceIcons: Record<string, any> = {
-    Mobile: Smartphone,
-    Desktop: Monitor,
-    Tablet: Tablet,
-  };
+  const timelineData = data.submissionTimeline.map(d => ({ name: formatDate(d.date).slice(0, 6), count: d.count }));
+  const deviceData = maxSegments(data.deviceBreakdown.map(d => ({ name: d.device, value: d.count })), 5);
+  const totalDeviceCount = deviceData.reduce((sum, d) => sum + d.value, 0);
 
   return (
     <div>
@@ -95,60 +78,34 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {statCard(Eye, 'Total views', data.totalViews.toLocaleString(), { dir: 'up', pct: '12%' })}
-        {statCard(Users, 'Total submissions', data.totalResponses.toLocaleString(), { dir: 'up', pct: '8%' })}
-        {statCard(Target, 'Completion rate', completionPct, { dir: 'up', pct: '3%' })}
-        {statCard(Clock, 'Avg. time', avgTime, { dir: 'down', pct: '5%' })}
+        <KpiCard label="Total views" value={data.totalViews.toLocaleString()} icon={<Eye className="w-4 h-4" />} change={{ value: '12%', positive: true }} />
+        <KpiCard label="Total submissions" value={data.totalResponses.toLocaleString()} icon={<Users className="w-4 h-4" />} change={{ value: '8%', positive: true }} />
+        <KpiCard label="Completion rate" value={completionPct} icon={<Target className="w-4 h-4" />} change={{ value: '3%', positive: true }} />
+        <KpiCard label="Avg. time" value={avgTime} icon={<Clock className="w-4 h-4" />} change={{ value: '5%', positive: false }} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Submission timeline</h2>
-          <div className="flex items-end gap-1.5 h-32">
-            {data.submissionTimeline.map((d, i) => {
-              const height = (d.count / maxTimelineCount) * 100;
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
-                  <div className="absolute bottom-full mb-1 hidden group-hover:block bg-[var(--color-text)] text-[var(--color-bg)] text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap">
-                    {d.count} submissions
-                  </div>
-                  <div
-                    className="w-full rounded-t bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors cursor-pointer"
-                    style={{ height: `${height}%` }}
-                  />
-                  <span className="text-[9px] text-[var(--color-text-tertiary)] whitespace-nowrap">
-                    {formatDate(d.date).slice(0, 6)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          {timelineData.length === 0 ? (
+            <p className="text-sm text-[var(--color-text-tertiary)] text-center py-12">No submissions yet</p>
+          ) : (
+            <BarChart data={timelineData} bars={[{ key: 'count', name: 'Submissions' }]} height={200} />
+          )}
         </div>
 
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Device breakdown</h2>
-          <div className="space-y-3">
-            {data.deviceBreakdown.map(d => {
-              const Icon = deviceIcons[d.device] || Globe;
-              return (
-                <div key={d.device}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-[var(--color-primary)]" />
-                      <span className="text-sm text-[var(--color-text)]">{d.device}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-[var(--color-text)]">{d.count}</span>
-                      <span className="text-xs text-[var(--color-text-tertiary)]">{d.percentage}%</span>
-                    </div>
-                  </div>
-                  <div className="w-full h-2 rounded-full bg-[var(--color-surface-muted)] overflow-hidden">
-                    <div className="h-full rounded-full bg-[var(--color-primary)] transition-all" style={{ width: `${d.percentage}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {deviceData.length === 0 ? (
+            <p className="text-sm text-[var(--color-text-tertiary)] text-center py-12">No device data</p>
+          ) : (
+            <DonutChart
+              data={deviceData}
+              height={200}
+              centerValue={data.totalResponses.toLocaleString()}
+              centerLabel="responses"
+            />
+          )}
         </div>
       </div>
 

@@ -120,6 +120,9 @@ export default function FormsDashboard() {
     <DashboardShell navSections={NAV_SECTIONS} apps={apps} brand={config.brand} user={user}
       onLogout={() => { window.location.href = '/logout'; }}
       onNavigate={href => router.push(href)} currentPath="/"
+      onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
+      searchPlaceholder="Search your forms, templates..."
+      searchGroups={NAV_SECTIONS.map(section => ({ label: section.label, items: section.items.map(item => ({ label: item.label, href: item.href, icon: item.icon })) }))}
       recentAccounts={recentAccounts} onSwitchAccount={handleSwitchAccount}>
       <div className="p-6 lg:p-8 max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">

@@ -61,7 +61,10 @@ export default function SettingsPage() {
   return (
     <DashboardShell navSections={NAV_SECTIONS} apps={apps} brand={config.brand} user={user}
       onLogout={() => { window.location.href = '/logout'; }}
-      onNavigate={href => router.push(href)} currentPath="/settings">
+      onNavigate={href => router.push(href)} currentPath="/settings"
+      onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
+      searchPlaceholder="Search your forms, templates..."
+      searchGroups={NAV_SECTIONS.map(section => ({ label: section.label, items: section.items.map(item => ({ label: item.label, href: item.href, icon: item.icon })) }))}>
       <div className="p-6 lg:p-8 max-w-3xl mx-auto">
         <h1 className="text-[28px] font-semibold text-[var(--color-text)] leading-tight mb-1">Settings</h1>
         <p className="text-sm text-[var(--color-text-secondary)] mb-6">Manage your account and form preferences</p>
