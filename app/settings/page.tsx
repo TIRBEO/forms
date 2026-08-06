@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, getLoginUrl, User } from '../../lib/auth';
+import { getCurrentUser, getLoginUrl, accountsUrl, User } from '../../lib/auth';
 import { api } from '../../lib/api-client';
 import { DashboardShell, type NavSection, type AppLink } from '@tirbeo/ui';
 import { Save, UserCircle, Bell, Palette, Globe, Shield } from 'lucide-react';
@@ -60,7 +60,7 @@ export default function SettingsPage() {
 
   return (
     <DashboardShell navSections={NAV_SECTIONS} apps={apps} brand={config.brand} user={user}
-      onLogout={() => { window.location.href = '/logout'; }}
+      onLogout={() => { window.location.href = accountsUrl('/logout'); }}
       onNavigate={href => router.push(href)} currentPath="/settings"
       onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
       searchPlaceholder="Search your forms, templates..."
@@ -70,7 +70,7 @@ export default function SettingsPage() {
         <p className="text-sm text-[var(--color-text-secondary)] mb-6">Manage your account and form preferences</p>
 
         <div className="space-y-6">
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+          <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
             <div className="p-5 border-b border-[var(--color-border)]">
               <h2 className="text-base font-semibold text-[var(--color-text)] flex items-center gap-2"><UserCircle className="w-4 h-4" /> Profile</h2>
               <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">Your personal information</p>
@@ -79,17 +79,17 @@ export default function SettingsPage() {
               <div>
                 <label className="text-sm font-medium text-[var(--color-text)] mb-1.5 block">Display name</label>
                 <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]" />
+                  className="w-full px-4 py-2.5 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]" />
               </div>
               <div>
                 <label className="text-sm font-medium text-[var(--color-text)] mb-1.5 block">Email</label>
                 <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]" />
+                  className="w-full px-4 py-2.5 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+          <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
             <div className="p-5 border-b border-[var(--color-border)]">
               <h2 className="text-base font-semibold text-[var(--color-text)] flex items-center gap-2"><Bell className="w-4 h-4" /> Notifications</h2>
               <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">Email notification preferences</p>
@@ -102,13 +102,13 @@ export default function SettingsPage() {
                 </div>
                 <button onClick={() => setForm({ ...form, emailNotifications: !form.emailNotifications })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.emailNotifications ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-surface-muted)]'}`}>
-                  <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${form.emailNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
+                  <span className={`inline-block h-4 w-4 rounded-full bg-[var(--color-bg)] transition-transform ${form.emailNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+          <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
             <div className="p-5 border-b border-[var(--color-border)]">
               <h2 className="text-base font-semibold text-[var(--color-text)] flex items-center gap-2"><Globe className="w-4 h-4" /> Defaults</h2>
               <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">Default settings for new forms</p>
@@ -117,7 +117,7 @@ export default function SettingsPage() {
               <div>
                 <label className="text-sm font-medium text-[var(--color-text)] mb-1.5 block">Default visibility</label>
                 <select value={form.defaultVisibility} onChange={e => setForm({ ...form, defaultVisibility: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]">
+                  className="w-full px-4 py-2.5 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-bg)] text-sm outline-none focus:border-[var(--color-primary)]">
                   <option value="private">Private</option>
                   <option value="public">Public</option>
                   <option value="unlisted">Unlisted</option>
@@ -131,7 +131,7 @@ export default function SettingsPage() {
           {saved && <span className="text-sm text-[var(--color-success)]">Saved successfully</span>}
           <button onClick={() => router.back()} className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">Cancel</button>
           <button onClick={handleSave} disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50">
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50">
             {saving ? 'Saving...' : <><Save className="w-4 h-4" /> Save changes</>}
           </button>
         </div>

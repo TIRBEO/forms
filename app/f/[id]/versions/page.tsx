@@ -78,9 +78,9 @@ export default function VersionsPage() {
           return (
             <div key={version.id}
               className={cn(
-                'rounded-xl border bg-[var(--color-surface)] transition-all',
+                ' border bg-[var(--color-surface)] transition-all',
                 version.isCurrent
-                  ? 'border-[var(--color-primary)] shadow-sm'
+                  ? 'border-[var(--color-primary)] shadow-[var(--shadow-card)]'
                   : isSelected || isCompareTarget
                     ? 'border-[var(--color-primary)]'
                     : 'border-[var(--color-border)]'
@@ -153,7 +153,7 @@ export default function VersionsPage() {
                     )}
                     {!version.isCurrent && !compareMode && (
                       <button onClick={() => restoreVersion(version.id)} disabled={restoring === version.id}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] disabled:opacity-50 transition-colors">
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border-2 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] disabled:opacity-50 transition-colors">
                         <RotateCcw className="w-3 h-3" />
                         {restoring === version.id ? 'Restoring...' : 'Restore'}
                       </button>
@@ -191,7 +191,7 @@ export default function VersionsPage() {
       </div>
 
       {versions.length === 0 && (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
           <History className="w-12 h-12 mx-auto mb-4 text-[var(--color-text-tertiary)]" />
           <h3 className="text-lg font-medium text-[var(--color-text)] mb-2">No versions yet</h3>
           <p className="text-sm text-[var(--color-text-secondary)]">Versions are created automatically when you save changes</p>

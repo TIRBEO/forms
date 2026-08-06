@@ -1,32 +1,9 @@
 @import "tailwindcss";
+@import "@tirbeo/theme/styles.css";
 
 @layer base {
-  :root {
-    --color-bg: #f8f9fa;
-    --color-surface: #ffffff;
-    --color-surface-muted: #f3f4f6;
-    --color-surface-raised: #e5e7eb;
-    --color-text: #111827;
-    --color-text-secondary: #6b7280;
-    --color-text-tertiary: #9ca3af;
-    --color-border: #e5e7eb;
-    --color-sidebar: #ffffff;
-    --color-sidebar-hover: #f3f4f6;
-    --color-sidebar-active: #eff6ff;
-    --color-header: #ffffff;
-    --color-primary: #2563eb;
-    --color-primary-hover: #1d4ed8;
-    --color-primary-surface: #eff6ff;
-    --color-success: #059669;
-    --color-success-surface: #ecfdf5;
-    --color-error: #dc2626;
-    --color-error-surface: #fef2f2;
-    --color-warning: #d97706;
-    --color-warning-surface: #fffbeb;
-  }
-
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 }
@@ -64,3 +41,426 @@
 .border-\[var\(--color-primary\)\] { border-color: var(--color-primary); }
 .border-\[var\(--color-bg\)\] { border-color: var(--color-bg); }
 .border-\[var\(--color-error\)\] { border-color: var(--color-error); }
+
+/* ─── Neobrutalist flat accent palette (landing §theme) ─── */
+:root {
+  --nb-yellow: #ffd93d;
+  --nb-blue: #4d96ff;
+  --nb-pink: #ff6b9d;
+  --nb-green: #4ade80;
+  --nb-orange: #ffa000;
+  --nb-purple: #9b5de5;
+  --nb-red: #e5484d;
+}
+
+/* Hard offset shadows — the neobrutalism signature */
+@utility shadow-brutal-sm {
+  box-shadow: 2px 2px 0 0 var(--shadow-color, var(--border));
+}
+@utility shadow-brutal {
+  box-shadow: 4px 4px 0 0 var(--shadow-color, var(--border));
+}
+@utility shadow-brutal-lg {
+  box-shadow: 7px 7px 0 0 var(--shadow-color, var(--border));
+}
+
+/* ─── Dark (ink) — inverted paper/ink ─── */
+:root,
+[data-theme="dark"] {
+  --bg: #17150f !important;
+  --bg-surface: #1d1a11 !important;
+  --bg-elevated: #262216 !important;
+  --bg-hover: #221f15 !important;
+  --bg-inset: #121009 !important;
+  --text: #f6f3ea !important;
+  --text-secondary: #d4cdb8 !important;
+  --text-muted: #8a8371 !important;
+  --text-tertiary: #6b6557;
+  --border: #f6f3ea !important;
+  --border-hover: #ffffff !important;
+  --border-muted: #8a8371;
+  --border-subtle: #3a3527;
+  --surface: #1d1a11;
+  --surface-hover: #262216;
+  --surface-active: #2a251a;
+  --primary: #f6f3ea;
+  --primary-hover: #17150f;
+  --primary-surface: #1d1a11;
+  --success: #4ade80 !important;
+  --success-surface: rgba(74, 222, 128, 0.1);
+  --error: #e5484d !important;
+  --error-surface: rgba(229, 72, 77, 0.12);
+  --warning: #ffd93d !important;
+  --warning-surface: rgba(255, 217, 61, 0.12);
+  --info: #4d96ff !important;
+  --info-surface: rgba(77, 150, 255, 0.12);
+  --accent: #ffd93d !important;
+  --accent-hover: #ffc700 !important;
+  --accent-bg: #ffd93d;
+  --on-accent: #17150f;
+  --error-bg: #17150f;
+  --error-border: #e5484d;
+  --success-bg: #17150f;
+  --success-border: #4ade80;
+  --radius: 0px !important;
+  --radius-card: 0px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+}
+
+/* ─── Light (paper) — warm paper + ink ─── */
+[data-theme="light"] {
+  --bg: #f6f3ea !important;
+  --bg-surface: #ffffff !important;
+  --bg-elevated: #fffdf5 !important;
+  --bg-hover: #efe9d9 !important;
+  --bg-inset: #e9e3d3 !important;
+  --text: #17150f !important;
+  --text-secondary: #4b4639 !important;
+  --text-muted: #6b6557 !important;
+  --text-tertiary: #8a8371;
+  --border: #17150f !important;
+  --border-hover: #17150f !important;
+  --border-muted: #8a8371;
+  --border-subtle: #d8d1bd;
+  --surface: #ffffff;
+  --surface-hover: #f0ead9;
+  --surface-active: #e9e3d3;
+  --primary: #17150f;
+  --primary-hover: #ffffff;
+  --primary-surface: #ffffff;
+  --success: #16a34a !important;
+  --success-surface: rgba(22, 163, 74, 0.1);
+  --error: #e5484d !important;
+  --error-surface: rgba(229, 72, 77, 0.1);
+  --warning: #b45309 !important;
+  --warning-surface: rgba(180, 83, 9, 0.1);
+  --info: #2563eb !important;
+  --info-surface: rgba(37, 99, 235, 0.1);
+  --accent: #ffd93d !important;
+  --accent-hover: #ffc700 !important;
+  --accent-bg: #ffd93d;
+  --on-accent: #17150f;
+  --error-bg: #ffffff;
+  --error-border: #e5484d;
+  --success-bg: #ffffff;
+  --success-border: #16a34a;
+  --radius: 0px !important;
+  --radius-card: 0px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+}
+
+/* ─── Theme-layer semantic vars pinned to paper/ink ─── */
+:root,
+[data-theme="dark"] {
+  --color-bg: #17150f;
+  --color-bg-surface: #1d1a11;
+  --color-bg-elevated: #262216;
+  --color-surface-default: #1d1a11;
+  --color-surface: #1d1a11;
+  --color-text: #f6f3ea;
+  --color-text-primary: #f6f3ea;
+  --color-text-secondary: #d4cdb8;
+  --color-text-muted: #8a8371;
+  --color-text-tertiary: #6b6557;
+  --color-border: #f6f3ea;
+  --color-border-default: #f6f3ea;
+  --color-border-muted: #8a8371;
+  --color-primary: #f6f3ea;
+  --color-primary-hover: #ffffff;
+  --color-primary-border: #f6f3ea;
+  --color-primary-surface: #262216;
+  --color-brand-default: #ffd93d;
+  --color-brand-hover: #ffc700;
+  --color-accent: #ffd93d;
+  --color-accent-hover: #ffc700;
+  --color-on-accent: #17150f;
+  --color-error-default: #e5484d;
+  --color-error: #e5484d;
+  --color-error-surface: rgba(229, 72, 77, 0.12);
+  --color-warning-default: #ffd93d;
+  --color-warning: #ffd93d;
+  --color-warning-surface: rgba(255, 217, 61, 0.12);
+  --color-success-default: #4ade80;
+  --color-success: #4ade80;
+  --color-success-surface: rgba(74, 222, 128, 0.1);
+  --color-info-default: #4d96ff;
+  --color-info: #4d96ff;
+  --color-info-surface: rgba(77, 150, 255, 0.12);
+  --color-error-subtle: #1d1a11;
+  --color-warning-subtle: #1d1a11;
+  --color-success-subtle: #1d1a11;
+  --color-info-subtle: #1d1a11;
+  --color-brand-subtle: #2a251a;
+  --color-danger-default: #e5484d;
+  --color-surface-page: #17150f;
+  --color-surface-muted: #262216;
+  --color-surface-raised: #262216;
+  --color-surface-subtle: #1d1a11;
+  --color-header: #1d1a11;
+  --color-sidebar: #1d1a11;
+  --color-sidebar-hover: #262216;
+  --color-sidebar-active: #2a251a;
+  --color-border-subtle: #3a3527;
+  --color-border-strong: #f6f3ea;
+  --color-danger-subtle: #2a251a;
+  --shadow-popover: 4px 4px 0 0 #f6f3ea;
+  --shadow-card: 4px 4px 0 0 #f6f3ea;
+}
+
+[data-theme="light"] {
+  --color-bg: #f6f3ea;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #fffdf5;
+  --color-surface-default: #ffffff;
+  --color-surface: #ffffff;
+  --color-text: #17150f;
+  --color-text-primary: #17150f;
+  --color-text-secondary: #4b4639;
+  --color-text-muted: #6b6557;
+  --color-text-tertiary: #8a8371;
+  --color-border: #17150f;
+  --color-border-default: #17150f;
+  --color-border-muted: #8a8371;
+  --color-primary: #17150f;
+  --color-primary-hover: #000000;
+  --color-primary-border: #17150f;
+  --color-primary-surface: #efe9d9;
+  --color-brand-default: #ffd93d;
+  --color-brand-hover: #ffc700;
+  --color-accent: #ffd93d;
+  --color-accent-hover: #ffc700;
+  --color-on-accent: #17150f;
+  --color-error-default: #e5484d;
+  --color-error: #e5484d;
+  --color-error-surface: rgba(229, 72, 77, 0.1);
+  --color-warning-default: #b45309;
+  --color-warning: #b45309;
+  --color-warning-surface: rgba(180, 83, 9, 0.1);
+  --color-success-default: #16a34a;
+  --color-success: #16a34a;
+  --color-success-surface: rgba(22, 163, 74, 0.1);
+  --color-info-default: #2563eb;
+  --color-info: #2563eb;
+  --color-info-surface: rgba(37, 99, 235, 0.1);
+  --color-error-subtle: #ffffff;
+  --color-warning-subtle: #ffffff;
+  --color-success-subtle: #ffffff;
+  --color-info-subtle: #ffffff;
+  --color-brand-subtle: #fff8d6;
+  --color-danger-default: #e5484d;
+  --color-surface-page: #f6f3ea;
+  --color-surface-muted: #efe9d9;
+  --color-surface-raised: #ffffff;
+  --color-surface-subtle: #ffffff;
+  --color-header: #ffffff;
+  --color-sidebar: #ffffff;
+  --color-sidebar-hover: #efe9d9;
+  --color-sidebar-active: #e9e3d3;
+  --color-border-subtle: #d8d1bd;
+  --color-border-strong: #17150f;
+  --color-danger-subtle: #fdeaea;
+  --shadow-popover: 4px 4px 0 0 #17150f;
+  --shadow-card: 4px 4px 0 0 #17150f;
+}
+
+/* ─── Theme toggle — brutalist square, fixed bottom-right ───
+   Bottom-right avoids the DashboardShell's sticky topbar. */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 4px 4px 0 0 var(--border);
+  transition: all 200ms ease;
+}
+
+.theme-toggle:hover {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--border);
+  box-shadow: 5px 5px 0 0 var(--border);
+  transform: translate(-2px, -2px);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animations */
+button, a, input, select, textarea {
+  transition: background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              opacity 200ms ease,
+              box-shadow 200ms ease,
+              transform 200ms ease;
+}
+
+::selection {
+  background: #ffd93d;
+  color: #17150f;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.18s ease forwards;
+}
+
+/* ─── Brutalist enforcement — square corners everywhere ─────────────
+   The design is radius-0 paper/ink; neutralise any rounded-* utility
+   (cards, buttons, icons) so the whole app matches the brutalist
+   language. */
+.rounded-sm,
+.rounded,
+.rounded-md,
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl {
+  border-radius: 0 !important;
+}
+
+/* Hard offset shadows — replace soft utility shadows with the brutal
+   card shadow. */
+.shadow-sm,
+.shadow,
+.shadow-md,
+.shadow-lg,
+.shadow-xl {
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* Brand badges in @tirbeo/ui use bg-brand-default + hardcoded text-white;
+   force the badge text to the page ink so it stays visible. */
+[class*="bg-[var(--color-brand-default"] {
+  color: var(--color-bg) !important;
+}
+
+/* ─── Buttons — ink slab, uppercase tracking, hard shadow ─── */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  padding: 0 24px;
+  background: var(--text);
+  color: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  gap: 8px;
+  box-shadow: 4px 4px 0 0 var(--border);
+  transition: all 200ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--border);
+  box-shadow: 6px 6px 0 0 var(--border);
+  transform: translate(-2px, -2px);
+}
+
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--border);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 0 var(--border);
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 24px;
+  background: var(--bg-surface);
+  color: var(--text);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 0 var(--border);
+  transition: all 200ms ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  box-shadow: 6px 6px 0 0 var(--border);
+  transform: translate(-2px, -2px);
+}
+
+.btn-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--border);
+}
+
+/* CAPTCHA Widget Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.captcha-checkbox.failed {
+  animation: shake 0.4s ease;
+  border-color: #ef4444 !important;
+}
+
+.captcha-checkbox.verified {
+  animation: pulse 0.3s ease;
+}

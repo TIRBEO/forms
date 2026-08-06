@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, getLoginUrl, User } from '../lib/auth';
+import { getCurrentUser, getLoginUrl, accountsUrl, User } from '../lib/auth';
 import { api } from '../lib/api-client';
 import { formatRelativeDate, getStatusBadgeStyle, cn } from '../lib/utils';
 import { DashboardShell, type NavSection, type AppLink } from '@tirbeo/ui';
 import {
-  FileText, Plus, Grid3X3, Eye, Search,
+  FileText, Plus, Grid3X3, Eye, Search, MessageSquare,
   Clock, BarChart3, MoreHorizontal, Copy, Archive, FolderOpen,
 } from 'lucide-react';
 
@@ -31,7 +31,7 @@ function addRecentAccount(account: { name?: string; email?: string; photoUrl?: s
 
 function clearUserAndRedirect(email: string) {
   try { localStorage.removeItem('auth_token'); } catch {}
-  window.location.href = `https://accounts.tirbeo.app/login?email=${encodeURIComponent(email)}`;
+  window.location.href = `${accountsUrl('/login')}?email=${encodeURIComponent(email)}`;
 }
 
 interface Form {
@@ -47,8 +47,8 @@ interface Form {
 }
 
 const NAV_SECTIONS: NavSection[] = [
-  { label: 'Overview', items: [{ href: '/', label: 'My Forms', icon: FileText }, { href: '/templates', label: 'Templates', icon: Grid3X3 }] },
-  { label: 'Public', items: [{ href: '/public', label: 'Directory', icon: Eye }] },
+  { label: 'Overview', items: [{ href: '/', label: 'My Forms', icon: FileText }, { href: '/my-responses', label: 'My Responses', icon: MessageSquare }] },
+  { label: 'Public', items: [{ href: '/public', label: 'Public Forms', icon: Eye }, { href: '/templates', label: 'Templates', icon: Grid3X3 }] },
 ];
 
 export default function FormsDashboard() {
@@ -118,7 +118,7 @@ export default function FormsDashboard() {
 
   return (
     <DashboardShell navSections={NAV_SECTIONS} apps={apps} brand={config.brand} user={user}
-      onLogout={() => { window.location.href = '/logout'; }}
+      onLogout={() => { window.location.href = accountsUrl('/logout'); }}
       onNavigate={href => router.push(href)} currentPath="/"
       onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
       searchPlaceholder="Search your forms, templates..."
@@ -131,7 +131,7 @@ export default function FormsDashboard() {
             <p className="mt-1 text-[var(--color-text-secondary)]">{forms.length} total forms</p>
           </div>
           <button onClick={() => router.push('/create')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm">
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors shadow-[var(--shadow-card)]">
             <Plus className="w-4 h-4" /> New Form
           </button>
         </div>
@@ -168,20 +168,20 @@ export default function FormsDashboard() {
         </div>
 
         {formsLoading ? (
-          <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 animate-pulse"><div className="h-5 w-48 bg-[var(--color-surface-muted)] rounded mb-3" /><div className="h-4 w-32 bg-[var(--color-surface-muted)] rounded" /></div>)}</div>
+          <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5 animate-pulse"><div className="h-5 w-48 bg-[var(--color-surface-muted)] rounded mb-3" /><div className="h-4 w-32 bg-[var(--color-surface-muted)] rounded" /></div>)}</div>
         ) : currentForms.length === 0 ? (
           <div className="text-center py-20">
             <FolderOpen className="w-12 h-12 mx-auto text-[var(--color-text-tertiary)] mb-4" />
             <h3 className="text-lg font-medium text-[var(--color-text)] mb-1">No forms found</h3>
             <p className="text-sm text-[var(--color-text-secondary)] mb-6">Create your first form to get started</p>
-             <button onClick={() => router.push('/create')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors"><Plus className="w-4 h-4" /> Create Form</button>
+             <button onClick={() => router.push('/create')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors"><Plus className="w-4 h-4" /> Create Form</button>
           </div>
         ) : (
           <div className="space-y-3">
             {currentForms.map(form => {
               const isMenuOpen = menuOpen === form.id;
               return (
-                <div key={form.id} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:border-[var(--color-primary-border)] transition-colors cursor-pointer" onClick={() => router.push(`/f/${form.id}`)}>
+                <div key={form.id} className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:border-[var(--color-primary-border)] transition-colors cursor-pointer" onClick={() => router.push(`/f/${form.id}`)}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
@@ -200,7 +200,7 @@ export default function FormsDashboard() {
                         className="p-1.5 rounded-lg hover:bg-[var(--color-surface-muted)] text-[var(--color-text-secondary)] transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
                       {isMenuOpen && (
                         <><div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                        <div className="absolute right-0 top-full mt-1 z-20 w-44 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-1.5">
+                        <div className="absolute right-0 top-full mt-1 z-20 w-44  border-2 border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] p-1.5">
                           <button onClick={() => { setMenuOpen(null); navigator.clipboard.writeText(`${window.location.origin}/f/${form.id}`); }}
                             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text)] transition-colors"><Copy className="w-4 h-4" /> Copy link</button>
                           {form.status !== 'archived' && <button onClick={() => { setMenuOpen(null); }}

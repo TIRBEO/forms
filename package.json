@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3004",
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
@@ -14,7 +14,7 @@
     "@tirbeo/charts": "^1.0.6",
     "@tirbeo/database": "^0.0.6",
     "@tirbeo/icons": "^1.0.5",
-    "@tirbeo/theme": "^1.0.5",
+    "@tirbeo/theme": "^1.0.6",
     "@tirbeo/ui": "^1.0.5",
     "@tirbeo/utils": "^0.0.6",
     "date-fns": "4.4.0",

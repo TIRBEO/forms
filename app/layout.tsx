@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { TirbeoThemeProvider } from "@tirbeo/theme";
+import { ThemeToggle } from "./components/theme-toggle";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,7 +19,10 @@ export default function FormsLayout({ children }: { children: React.ReactNode })
   return (
     <html lang="en" className={inter.variable}>
       <body suppressHydrationWarning className="font-sans antialiased">
-        <TirbeoThemeProvider>{children}</TirbeoThemeProvider>
+        <TirbeoThemeProvider>
+          <ThemeToggle />
+          {children}
+        </TirbeoThemeProvider>
       </body>
     </html>
   );

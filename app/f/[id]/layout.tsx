@@ -13,6 +13,7 @@ interface Form {
   publicId: string;
   responseCount: number;
   viewCount: number;
+  source?: 'user' | 'admin';
 }
 
 const TABS = [
@@ -31,7 +32,7 @@ export default function FormLayout({ children }: { children: React.ReactNode }) 
   const [form, setForm] = useState<Form | null>(null);
 
   useEffect(() => {
-    api.get<Form>(`/api/forms/${id}`).then(setForm).catch(() => {});
+    api.get<any>(`/api/forms/${id}`).then(d => setForm({ ...d, source: d?.settings?.source })).catch(() => {});
   }, [id]);
 
   const currentTab = TABS.find(t => pathname.includes(t.href))?.href || 'overview';
@@ -57,7 +58,7 @@ export default function FormLayout({ children }: { children: React.ReactNode }) 
           <div className="flex items-center gap-2">
             <span className="text-xs text-[var(--color-text-tertiary)]">{form?.responseCount || 0} responses</span>
             {form?.status === 'published' && (
-              <button onClick={() => window.open(`/f/${form.publicId}`, '_blank')}
+              <button onClick={() => window.open(`/${form?.source === 'admin' ? 'a' : 'f'}/${form.publicId}`, '_blank')}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary-surface)] transition-colors">
                 <ExternalLink className="w-3.5 h-3.5" />
                 View live

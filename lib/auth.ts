@@ -33,7 +33,19 @@ export function clearUser() { currentUser = null; }
 
 export function getLoginUrl() {
   const redirect = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
-  return `https://accounts.tirbeo.app/login?redirect_to=${redirect}`;
+  return `${accountsUrl('/login')}?redirect_to=${redirect}`;
+}
+
+/**
+ * Dev/prod-aware accounts app URL. Local dev points at the accounts app
+ * running on :3002; production uses the real accounts.tirbeo.app subdomain.
+ */
+export function accountsUrl(path = '/'): string {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.tirbeo.app';
+  const isLocal = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  if (isLocal) return `http://localhost:3002${cleanPath}`;
+  return `https://accounts.tirbeo.app${cleanPath}`;
 }
 
 export async function logout() {

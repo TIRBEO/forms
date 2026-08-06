@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '../../../../lib/api-client';
 import { cn, formatDate } from '../../../../lib/utils';
-import { KpiCard, BarChart, DonutChart } from '@tirbeo/charts';
+import { BarChart, DonutChart } from '@tirbeo/charts';
 import {
-  Eye, Users, Target, Clock, Download, ArrowUp, ArrowDown,
+  Eye, Users, Target, Clock, Download,
   Star,
 } from 'lucide-react';
+import { StatCard } from '../../../components/stat-card';
 
 interface AnalyticsData {
   totalViews: number;
@@ -71,21 +72,22 @@ export default function AnalyticsPage() {
           <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">Performance and submission insights</p>
         </div>
         <button
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
+          onClick={async () => { try { await api.download(`/api/forms/${id}/export?format=csv`, `${id}-responses.csv`); } catch {} }}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border-2 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
           <Download className="w-3.5 h-3.5" />
-          Export report
+          Export CSV
         </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <KpiCard label="Total views" value={data.totalViews.toLocaleString()} icon={<Eye className="w-4 h-4" />} change={{ value: '12%', positive: true }} />
-        <KpiCard label="Total submissions" value={data.totalResponses.toLocaleString()} icon={<Users className="w-4 h-4" />} change={{ value: '8%', positive: true }} />
-        <KpiCard label="Completion rate" value={completionPct} icon={<Target className="w-4 h-4" />} change={{ value: '3%', positive: true }} />
-        <KpiCard label="Avg. time" value={avgTime} icon={<Clock className="w-4 h-4" />} change={{ value: '5%', positive: false }} />
+        <StatCard label="Total views" value={data.totalViews.toLocaleString()} icon={<Eye className="w-5 h-5 text-[var(--color-primary)]" />} />
+        <StatCard label="Total submissions" value={data.totalResponses.toLocaleString()} icon={<Users className="w-5 h-5 text-[var(--color-primary)]" />} />
+        <StatCard label="Completion rate" value={completionPct} icon={<Target className="w-5 h-5 text-[var(--color-primary)]" />} />
+        <StatCard label="Avg. time" value={avgTime} icon={<Clock className="w-5 h-5 text-[var(--color-primary)]" />} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Submission timeline</h2>
           {timelineData.length === 0 ? (
             <p className="text-sm text-[var(--color-text-tertiary)] text-center py-12">No submissions yet</p>
@@ -94,7 +96,7 @@ export default function AnalyticsPage() {
           )}
         </div>
 
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Device breakdown</h2>
           {deviceData.length === 0 ? (
             <p className="text-sm text-[var(--color-text-tertiary)] text-center py-12">No device data</p>
@@ -110,7 +112,7 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Per-question breakdown</h2>
           <div className="space-y-3">
             {data.fieldBreakdown.map(f => (
@@ -131,7 +133,7 @@ export default function AnalyticsPage() {
         </div>
 
         {data.ratingDistribution && (
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
             <h2 className="text-sm font-semibold text-[var(--color-text)] mb-4">Rating distribution</h2>
             <div className="space-y-2">
               {data.ratingDistribution.sort((a, b) => b.rating - a.rating).map(r => {

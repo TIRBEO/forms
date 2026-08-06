@@ -3,18 +3,21 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '../../../../lib/api-client';
-import { cn, formatRelativeDate, formatDateTime } from '../../../../lib/utils';
+import { useRealtimeFormStats } from '../../../../lib/use-realtime-form-stats';
+import { formatRelativeDate } from '../../../../lib/utils';
 import {
-  Eye, Users, Clock, Target, Share2, Download, ExternalLink,
-  CheckCircle2, XCircle, AlertCircle, BarChart3, ArrowUp, ArrowDown,
-  Copy, ChevronRight, Settings,
+  Eye, Users, Clock, Target, Download, ExternalLink,
+  BarChart3, Copy, ChevronRight, Settings, Activity,
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { StatCard } from '../../../components/stat-card';
 
 interface FormOverview {
   id: string;
   title: string;
   status: string;
   publicId: string;
+  source?: 'user' | 'admin';
   responseCount: number;
   viewCount: number;
   completionRate: number;
@@ -29,27 +32,25 @@ interface FormOverview {
     duration?: number;
   }[];
   fields: { id: string; label: string; type: string }[];
+  timeline: { date: string; views: number; responses: number }[];
 }
 
+// Resolve a theme token to a concrete color for recharts (fill/attribute APIs).
+function useThemeColor(name: string, fallback: string): string {
+  const [color, setColor] = useState(fallback);
+  useEffect(() => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    if (v) setColor(v);
+  }, [name]);
+  return color;
+}
 
-function statCard(icon: any, label: string, value: string, trend?: { dir: 'up' | 'down'; pct: string }) {
-  const Icon = icon;
+function LivePill({ connected }: { connected: boolean }) {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-      <div className="flex items-center justify-between mb-3">
-        <div className="w-10 h-10 rounded-lg bg-[var(--color-primary-surface)] flex items-center justify-center">
-          <Icon className="w-5 h-5 text-[var(--color-primary)]" />
-        </div>
-        {trend && (
-          <span className={cn('flex items-center gap-0.5 text-xs font-medium', trend.dir === 'up' ? 'text-[var(--color-success)]' : 'text-[var(--color-error)]')}>
-            {trend.dir === 'up' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-            {trend.pct}
-          </span>
-        )}
-      </div>
-      <div className="text-2xl font-semibold text-[var(--color-text)]">{value}</div>
-      <div className="text-xs text-[var(--color-text-secondary)] mt-0.5">{label}</div>
-    </div>
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--color-primary-surface)] text-[var(--color-primary)]">
+      <span className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-emerald-500 animate-pulse' : 'bg-[var(--color-text-tertiary)]'}`} />
+      {connected ? 'Live' : 'Connecting…'}
+    </span>
   );
 }
 
@@ -59,6 +60,17 @@ export default function FormOverview() {
   const id = params.id as string;
   const [data, setData] = useState<FormOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const [live, setLive] = useState({ views: 0, responses: 0 });
+
+  const primaryColor = useThemeColor('--color-primary', '#4f7aff');
+  const tertiaryColor = useThemeColor('--color-text-tertiary', '#94a3b8');
+
+  const { connected } = useRealtimeFormStats(id, (delta) => {
+    setLive(l => ({
+      views: l.views + (delta.views || 0),
+      responses: l.responses + (delta.responses || 0),
+    }));
+  });
 
   useEffect(() => {
     api.get<FormOverview>(`/api/forms/${id}/overview`)
@@ -82,32 +94,42 @@ export default function FormOverview() {
     );
   }
 
+  const views = data.viewCount + live.views;
+  const responses = data.responseCount + live.responses;
   const completionPct = `${data.completionRate}%`;
   const avgTime = data.avgTimeSeconds < 60 ? `${data.avgTimeSeconds}s` : `${Math.floor(data.avgTimeSeconds / 60)}m ${data.avgTimeSeconds % 60}s`;
+
+  const chartData = (data.timeline || []).map(t => ({
+    ...t,
+    label: t.date.slice(5), // MM-DD
+  }));
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-lg font-semibold text-[var(--color-text)]">Overview</h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
-            Created {formatRelativeDate(data.createdAt)} &middot; Updated {formatRelativeDate(data.updatedAt)}
-          </p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-lg font-semibold text-[var(--color-text)]">Overview</h1>
+            <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+              Created {formatRelativeDate(data.createdAt)} &middot; Updated {formatRelativeDate(data.updatedAt)}
+            </p>
+          </div>
+          <LivePill connected={connected} />
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { navigator.clipboard.writeText(`https://tirbeo.app/f/${data.publicId}`); }}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
+          <button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/${data.source === 'admin' ? 'a' : 'f'}/${data.publicId}`); }}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border-2 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
             <Copy className="w-3.5 h-3.5" />
             Copy link
           </button>
-          <button onClick={() => router.push(`/f/${id}/responses`)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
+          <button onClick={async () => { try { await api.download(`/api/forms/${id}/export?format=csv`, `${id}-responses.csv`); } catch {} }}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border-2 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
             <Download className="w-3.5 h-3.5" />
             Export
           </button>
           {data.status === 'published' && (
-            <button onClick={() => window.open(`/f/${data.publicId}`, '_blank')}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
+            <button onClick={() => window.open(`/${data.source === 'admin' ? 'a' : 'f'}/${data.publicId}`, '_blank')}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
               <ExternalLink className="w-4 h-4" />
               Preview
             </button>
@@ -115,15 +137,53 @@ export default function FormOverview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {statCard(Eye, 'Total views', data.viewCount.toLocaleString(), { dir: 'up', pct: '12%' })}
-        {statCard(Users, 'Total submissions', data.responseCount.toLocaleString(), { dir: 'up', pct: '8%' })}
-        {statCard(Target, 'Completion rate', completionPct, { dir: 'up', pct: '3%' })}
-        {statCard(Clock, 'Avg. time', avgTime, { dir: 'down', pct: '5%' })}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <StatCard label="Total views" value={views.toLocaleString()} icon={<Eye className="w-5 h-5 text-[var(--color-primary)]" />} hint={connected ? 'Live' : undefined} />
+        <StatCard label="Total submissions" value={responses.toLocaleString()} icon={<Users className="w-5 h-5 text-[var(--color-primary)]" />} hint={connected ? 'Live' : undefined} />
+        <StatCard label="Completion rate" value={completionPct} icon={<Target className="w-5 h-5 text-[var(--color-primary)]" />} />
+        <StatCard label="Avg. time" value={avgTime} icon={<Clock className="w-5 h-5 text-[var(--color-primary)]" />} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] mb-8">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-border)]">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--color-text)]">Views vs responses</h2>
+            <span className="text-xs text-[var(--color-text-tertiary)]">Last 14 days</span>
+          </div>
+          {connected && (
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-[var(--color-text-secondary)]">
+              <Activity className="w-3.5 h-3.5 text-emerald-500" />
+              Updates in real time
+            </span>
+          )}
+        </div>
+        <div className="p-4">
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={chartData} barGap={2} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: tertiaryColor }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: tertiaryColor }} tickLine={false} axisLine={false} />
+                <Tooltip
+                  cursor={{ fill: 'var(--color-surface-muted)' }}
+                  contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 12, color: 'var(--color-text)' }}
+                  labelFormatter={(label) => `Date: ${label}`}
+                />
+                <Legend wrapperStyle={{ fontSize: 12, color: 'var(--color-text-secondary)' }} />
+                <Bar dataKey="views" name="Views" fill={primaryColor} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="responses" name="Responses" fill={tertiaryColor} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="py-16 text-center text-sm text-[var(--color-text-tertiary)]">
+              No activity yet — share your form link to start collecting views.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2  border-2 border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-border)]">
             <h2 className="text-sm font-semibold text-[var(--color-text)]">Recent responses</h2>
             <button onClick={() => router.push(`/f/${id}/responses`)}
@@ -158,7 +218,7 @@ export default function FormOverview() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="px-5 py-4 border-b border-[var(--color-border)]">
             <h2 className="text-sm font-semibold text-[var(--color-text)]">Quick actions</h2>
           </div>

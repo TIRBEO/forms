@@ -82,19 +82,24 @@ export default function ResponseDetailPage() {
       </div>
 
       {showDeleteConfirm && (
-        <div className="mb-6 rounded-xl border border-[var(--color-error)] bg-[var(--color-error-surface)] p-4">
+        <div className="mb-6  border border-[var(--color-error)] bg-[var(--color-error-surface)] p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-[var(--color-error)] mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-[var(--color-text)]">Delete this response?</p>
               <p className="text-xs text-[var(--color-text-secondary)] mt-1">This action cannot be undone.</p>
               <div className="flex items-center gap-2 mt-3">
-                <button onClick={() => {}}
-                  className="px-3 py-1.5 rounded-lg bg-[var(--color-error)] text-white text-sm font-medium hover:opacity-90 transition-colors">
+                <button onClick={async () => {
+                  try {
+                    await api.delete(`/api/forms/${id}/responses/${responseId}`);
+                    router.replace(`/f/${id}/responses`);
+                  } catch {}
+                }}
+                  className="px-3 py-1.5 rounded-lg bg-[var(--color-error)] text-[var(--color-bg)] text-sm font-medium hover:opacity-90 transition-colors">
                   Delete
                 </button>
                 <button onClick={() => setShowDeleteConfirm(false)}
-                  className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
+                  className="px-3 py-1.5 rounded-lg border-2 border-[var(--color-border)] text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] transition-colors">
                   Cancel
                 </button>
               </div>
@@ -103,7 +108,7 @@ export default function ResponseDetailPage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 mb-4">
+      <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5 mb-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-[var(--color-text)]">Submission details</h2>
           <span className="text-xs text-[var(--color-text-tertiary)]">ID: {data.id}</span>
@@ -143,7 +148,7 @@ export default function ResponseDetailPage() {
           const Icon = FIELD_ICONS[answer.fieldType] || FileText;
           return (
             <div key={answer.fieldId}
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+              className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Icon className="w-4 h-4 text-[var(--color-primary)]" />
                 <span className="text-sm font-medium text-[var(--color-text)]">{answer.fieldLabel}</span>
@@ -155,13 +160,13 @@ export default function ResponseDetailPage() {
         })}
       </div>
 
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+      <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5">
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare className="w-4 h-4 text-[var(--color-primary)]" />
           <h2 className="text-sm font-semibold text-[var(--color-text)]">Notes</h2>
         </div>
         <textarea value={notes} onChange={e => setNotes(e.target.value)}
-          className="w-full min-h-[80px] text-sm text-[var(--color-text)] bg-[var(--color-surface-muted)] rounded-lg border border-[var(--color-border)] p-3 outline-none resize-none placeholder:text-[var(--color-text-tertiary)]"
+          className="w-full min-h-[80px] text-sm text-[var(--color-text)] bg-[var(--color-surface-muted)] rounded-lg border-2 border-[var(--color-border)] p-3 outline-none resize-none placeholder:text-[var(--color-text-tertiary)]"
           placeholder="Add notes about this response..." />
       </div>
     </div>

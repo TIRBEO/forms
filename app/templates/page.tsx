@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { getCurrentUser, getLoginUrl, User } from '../../lib/auth';
+import { getCurrentUser, getLoginUrl, accountsUrl, User } from '../../lib/auth';
 import { api } from '../../lib/api-client';
 import { cn } from '../../lib/utils';
 import {
@@ -81,7 +81,7 @@ export default function TemplatesPage() {
 
   return (
     <DashboardShell navSections={NAV_SECTIONS} brand={config.brand} user={user}
-      onLogout={() => { window.location.href = '/logout'; }}
+      onLogout={() => { window.location.href = accountsUrl('/logout'); }}
       onNavigate={href => router.push(href)} currentPath={pathname || '/templates'}
       onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
       searchPlaceholder="Search your forms, templates..."
@@ -107,7 +107,7 @@ export default function TemplatesPage() {
             </div>
 
             {filtered.length === 0 ? (
-              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
+              <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
                 <Grid3X3 className="w-12 h-12 mx-auto mb-4 text-[var(--color-text-tertiary)]" />
                 <h3 className="text-lg font-medium text-[var(--color-text)] mb-2">No templates found</h3>
                 <p className="text-sm text-[var(--color-text-secondary)]">Try a different search term or category</p>
@@ -116,7 +116,7 @@ export default function TemplatesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.map(t => (
                   <div key={t.id}
-                    className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:shadow-sm transition-shadow group flex flex-col">
+                    className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:shadow-[var(--shadow-card)] transition-shadow group flex flex-col">
                     <div className="w-10 h-10 rounded-lg bg-[var(--color-primary-surface)] flex items-center justify-center mb-4">
                       <t.icon className="w-5 h-5 text-[var(--color-primary)]" />
                     </div>
@@ -132,7 +132,7 @@ export default function TemplatesPage() {
                       <span className="flex items-center gap-1"><Users className="w-3 h-3" />{t.responses.toLocaleString()} responses</span>
                     </div>
                     <button
-                       className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
+                       className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
                        <Sparkles className="w-3.5 h-3.5" />
                        Use Template
                      </button>

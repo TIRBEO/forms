@@ -101,7 +101,7 @@ export default function ActivityPage() {
       </div>
 
       {filteredEvents.length === 0 ? (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
+        <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
           <Activity className="w-12 h-12 mx-auto mb-4 text-[var(--color-text-tertiary)]" />
           <h3 className="text-lg font-medium text-[var(--color-text)] mb-2">No activity yet</h3>
           <p className="text-sm text-[var(--color-text-secondary)]">Events will appear here as you work on your form</p>

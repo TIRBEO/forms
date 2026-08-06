@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { getCurrentUser, getLoginUrl, User } from '../../lib/auth';
+import { getCurrentUser, getLoginUrl, accountsUrl, User } from '../../lib/auth';
 import { api } from '../../lib/api-client';
 import { cn, formatDate } from '../../lib/utils';
 import {
@@ -105,7 +105,7 @@ export default function PublicDirectoryPage() {
 
   return (
     <DashboardShell navSections={NAV_SECTIONS} brand={config.brand} user={user}
-      onLogout={() => { window.location.href = '/logout'; }}
+      onLogout={() => { window.location.href = accountsUrl('/logout'); }}
       onNavigate={href => router.push(href)} currentPath={pathname || '/public'}
       onSearch={query => { if (query.trim()) router.push(`/?q=${encodeURIComponent(query)}`); }}
       searchPlaceholder="Search your forms, templates..."
@@ -122,7 +122,7 @@ export default function PublicDirectoryPage() {
               className={cn(
                 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors',
                 visibilityFilter === f
-                  ? 'bg-[var(--color-primary)] text-white'
+                  ? 'bg-[var(--color-primary)] text-[var(--color-bg)]'
                   : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)]'
               )}>
               {f === 'Public' ? <Globe className="w-3.5 h-3.5" /> : f === 'Unlisted' ? <Lock className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -139,21 +139,21 @@ export default function PublicDirectoryPage() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search forms..."
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]"
             />
           </div>
           <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]">
+            className="px-4 py-2 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]">
             {CATEGORY_FILTERS.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as any)}
-            className="px-4 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]">
+            className="px-4 py-2 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-sm outline-none focus:border-[var(--color-primary)]">
             {SORT_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
 
         {filtered.length === 0 ? (
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
+          <div className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
             <FolderOpen className="w-12 h-12 mx-auto mb-4 text-[var(--color-text-tertiary)]" />
             <h3 className="text-lg font-medium text-[var(--color-text)] mb-1">No forms found</h3>
             <p className="text-sm text-[var(--color-text-secondary)]">Try adjusting your search or filters</p>
@@ -162,7 +162,7 @@ export default function PublicDirectoryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(f => (
               <div key={f.id}
-                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:shadow-sm transition-shadow group flex flex-col">
+                className="border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-5 hover:shadow-[var(--shadow-card)] transition-shadow group flex flex-col">
                 <div className="flex items-start justify-between mb-3">
                   <div className="w-10 h-10 rounded-lg bg-[var(--color-primary-surface)] flex items-center justify-center">
                     <FileText className="w-5 h-5 text-[var(--color-primary)]" />
@@ -192,8 +192,8 @@ export default function PublicDirectoryPage() {
                   <span>by {f.user?.displayName || f.user?.email || 'Unknown'}</span>
                   <span>Updated {new Date(f.updatedAt || f.createdAt).toLocaleDateString()}</span>
                 </div>
-                <button onClick={() => router.push(`/f/${f.publicId || f.id}`)}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
+                <button onClick={() => router.push(`/a/${f.publicId}`)}
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors">
                   <ExternalLink className="w-3.5 h-3.5" />
                   Fill Form
                 </button>
